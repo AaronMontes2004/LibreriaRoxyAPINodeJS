@@ -5,7 +5,7 @@ const { validationResult } =require("express-validator");
 const getCategories = async(req,res) => {
 
     try {
-        const categories = await pool.query(categoriesQueries.getCategories);
+        const categories = await pool.query(categoriesQueries.getCategoriesQuery);
 
         res.status(200).json({
             status: "OK",
@@ -32,7 +32,7 @@ const addCategory = async (req,res) => {
             message: err.errors[0].msg
         })
 
-        const aggregateCategory = await pool.query("INSERT INTO categoria(nombreCategoria) VALUES (?);",
+        const aggregateCategory = await pool.query(categoriesQueries.addCategoryQuery,
         [req.body.nombreCategoria.toLowerCase()]);
 
         console.log(aggregateCategory);

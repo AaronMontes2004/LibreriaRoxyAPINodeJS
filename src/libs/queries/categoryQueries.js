@@ -1,6 +1,6 @@
 const categoriesQueries = {
-    getCategories: "SELECT * FROM categoria",
-    addCategory: ""
+    getCategoriesQuery: "SELECT * FROM categoria",
+    addCategoryQuery: "INSERT INTO categoria(nombreCategoria) VALUES (?);"
 };
 
 module.exports = categoriesQueries;
