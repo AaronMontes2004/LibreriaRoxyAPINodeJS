@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const { pool } = require("../database");
+const { loginUsuarioQuery, signinUsuarioQuery } = require("../libs/queries/userQueries");
 
 const loginUsuario = async (req,res) => {
 
@@ -14,7 +15,7 @@ const loginUsuario = async (req,res) => {
 
         const { usuarioUsuario, contrasenaUsuario } = req.body;
 
-        const user = await pool.query("SELECT * FROM usuario WHERE usuarioUsuario = ?", [usuarioUsuario]);
+        const user = await pool.query(loginUsuarioQuery, [usuarioUsuario]);
 
         const verified = await bcrypt.compare( contrasenaUsuario, user[0][0].contrasenaUsuario);
         console.log(verified);
@@ -54,7 +55,7 @@ const signinUsuario = async (req,res) => {
 
         const contrasenaUsuarioHash = await bcrypt.hash(contrasenaUsuario, 8);
 
-        const registeredUser = await pool.query("INSERT INTO usuario(nombreUsuario, apellidoUsuario, usuarioUsuario, emailUsuario, contrasenaUsuario, idRol) VALUES (?,?,?,?,?,?)", [nombreUsuario, apellidoUsuario, usuarioUsuario, emailUsuario, contrasenaUsuarioHash, idRol]);
+        const registeredUser = await pool.query(signinUsuarioQuery, [nombreUsuario, apellidoUsuario, usuarioUsuario, emailUsuario, contrasenaUsuarioHash, idRol]);
 
         console.log(registeredUser);
 
