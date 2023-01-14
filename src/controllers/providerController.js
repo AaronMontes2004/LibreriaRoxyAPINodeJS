@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator");
 const { pool } = require("../database");
-const { getProvidersQuery, addProviderQuery, getProviderByIdQuery, changeProviderStatusQuery, updateProviderQuery } = require("../libs/queries/providerQueries");
+const { getProvidersQuery, addProviderQuery, getProviderByIdQuery, changeProviderStatusQuery, updateProviderQuery, getProvidersEnabledQuery } = require("../libs/queries/providerQueries");
 
 const getProviders = async (req,res) => {
     try {
@@ -22,6 +22,28 @@ const getProviders = async (req,res) => {
         })
     }
 }
+
+const getProvidersEnabled = async (req,res) => {
+    try {
+
+        const providers = await pool.query(getProvidersEnabledQuery);
+
+        res.json({
+            status: "OK",
+            message: "Se obtuvieron los proveedores habilitados exitosamente",
+            data: providers[0]
+        })
+        
+    } catch (error) {
+        console.log(error);
+        res.json({
+            status: "DANGER",
+            message: "Error interno del servidor, vuelva a intentarlo mas tarde",
+            data: error
+        })
+    }
+}
+
 
 const getProviderById = async (req,res) => {
     try {
@@ -149,6 +171,7 @@ const updateProvider = async (req,res) => {
 
 module.exports = {
     getProviders,
+    getProvidersEnabled,
     addProvider,
     changeProviderStatus,
     getProviderById,

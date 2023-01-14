@@ -22,5 +22,9 @@ app.use("/api/category", require("./routes/categoryRoutes"));
 app.use("/api/user", require("./routes/userRoutes"));
 app.use("/api/location", require("./routes/locationRoutes"))
 app.use("/api/provider", require("./routes/providerRoutes"))
+app.use("/api/purchase", require("./routes/purchaseRoutes"));
+app.use("/api/sale", require("./routes/saleRoutes"));
+app.use("/api/purchase-detail", require("./routes/purchaseDetailRoutes"))
+app.use("/api/sale-detail", require("./routes/saleDetailRoutes"))
 
 module.exports = app;

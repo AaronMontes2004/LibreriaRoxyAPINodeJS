@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator");
 const { pool } = require("../database");
-const { getProductsQuery, addProductQuery, getProductByIdQuery, changeProductStatusQuery, updateProductQuery } = require("../libs/queries/productQueries");
+const { getProductsQuery, addProductQuery, getProductByIdQuery, changeProductStatusQuery, updateProductQuery, getProductsByNameQuery, getProductsEnabledQuery, getProductsByNameEnabledQuery } = require("../libs/queries/productQueries");
 
 
 const getProducts = async(req,res) => {
@@ -10,6 +10,26 @@ const getProducts = async(req,res) => {
         return res.json({
             status: "OK",
             message: "Se obtuvieron los productos exitosamente",
+            data: products[0]
+        });
+    
+    } catch (error) {
+        console.log(error);
+        res.json({
+            status: "DANGER",
+            message: "Error interno del servidor, vuelva a intentarlo mas tarde",
+            data: error
+        })
+    }
+}
+
+const getProductsEnabled = async(req,res) => {
+    try {
+        const products = await pool.query(getProductsEnabledQuery);
+
+        return res.json({
+            status: "OK",
+            message: "Se obtuvieron los productos habilitados exitosamente",
             data: products[0]
         });
     
@@ -36,7 +56,7 @@ const addProduct = async(req,res) => {
 
         const { nombreProducto, descripcionProducto = "", stockProducto, precioCProducto, precioVProducto, idUbicacion, idCategoria } = req.body;
 
-        const dateRegister = new Date().getFullYear() + "-" + (new Date().getMonth() + 1)+ "-" + (new Date().getDay() + 1)
+        const dateRegister = new Date().getFullYear() + "-" + (new Date().getMonth() + 1)+ "-" + (new Date().getDate())
         console.log(dateRegister);
 
         const aggregateProduct = await pool.query(addProductQuery, [nombreProducto, descripcionProducto, stockProducto, precioCProducto, precioVProducto, dateRegister, idUbicacion, idCategoria]);
@@ -152,10 +172,53 @@ const updateProduct = async (req,res) => {
     }
 }
 
+const getProductByName = async(req,res) => {
+    try {
+        const { nombreProducto } = req.params;
+        const products = await pool.query(getProductsByNameQuery, [nombreProducto]);
+
+        return res.json({
+            status: "OK",
+            message: "Los productos se obtuvieron exitosamente",
+            data: products[0]
+        })
+    } catch (error) {
+        console.log(error);
+        res.json({
+            status: "DANGER",
+            message: "Error interno del servidor, vuelva a intentarlo mas tarde",
+            data: error
+        })
+    }
+}
+
+const getProductByNameEnabled = async(req,res) => {
+    try {
+        const { nombreProducto } = req.params;
+        const products = await pool.query(getProductsByNameEnabledQuery, [nombreProducto]);
+
+        return res.json({
+            status: "OK",
+            message: "Los productos habilitados se obtuvieron exitosamente",
+            data: products[0]
+        })
+    } catch (error) {
+        console.log(error);
+        res.json({
+            status: "DANGER",
+            message: "Error interno del servidor, vuelva a intentarlo mas tarde",
+            data: error
+        })
+    }
+}
+
 module.exports = {
     getProducts,
+    getProductsEnabled,
     addProduct,
     getProductById,
     changeProductStatus,
-    updateProduct
+    updateProduct,
+    getProductByName,
+    getProductByNameEnabled
 }
