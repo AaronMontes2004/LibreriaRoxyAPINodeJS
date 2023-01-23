@@ -13,14 +13,14 @@ const productValidation = {
         body("precioCProducto").notEmpty().withMessage("El precio de compra no puede estar vacio").isNumeric().withMessage("El precio debe ser un número"),
         body("precioVProducto").notEmpty().withMessage("El precio de venta no puede estar vacio").isNumeric().withMessage("El precio debe ser un número"),
         body("idUbicacion").notEmpty().withMessage("La ubicación no puede estar vacio").custom(async(value) => {
-            if (value.toLowerCase() === "vacio") throw new Error("Debe seleccionar una ubicación");
+            if (value === "vacio") throw new Error("Debe seleccionar una ubicación");
 
             const ubicacion = await pool.query("SELECT * FROM ubicacion WHERE idUbicacion = ?", [value]);
             if (ubicacion[0].length !== 0) return true;
             throw new Error("La ubicación no existe");
         }),
         body("idCategoria").notEmpty().withMessage("La categoria no puede estar vacio").custom(async(value)=> {
-            if (value.toLowerCase() === "vacio") throw new Error("Debe seleccionar una categoria");
+            if (value === "vacio") throw new Error("Debe seleccionar una categoria");
             const categoria = await pool.query("SELECT * FROM categoria WHERE idCategoria = ?", [value]);
             if (categoria[0].length !== 0) return true;
             throw new Error("La categoria no existe");

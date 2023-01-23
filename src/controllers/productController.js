@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator");
 const { pool } = require("../database");
-const { getProductsQuery, addProductQuery, getProductByIdQuery, changeProductStatusQuery, updateProductQuery, getProductsByNameQuery, getProductsEnabledQuery, getProductsByNameEnabledQuery } = require("../libs/queries/productQueries");
+const { getProductsQuery, addProductQuery, getProductByIdQuery, changeProductStatusQuery, updateProductQuery, getProductsByNameQuery, getProductsEnabledQuery, getProductsByNameEnabledQuery, addProductMeasureQuery } = require("../libs/queries/productQueries");
 
 
 const getProducts = async(req,res) => {
@@ -54,12 +54,18 @@ const addProduct = async(req,res) => {
             data: err
         });
 
-        const { nombreProducto, descripcionProducto = "", stockProducto, precioCProducto, precioVProducto, idUbicacion, idCategoria } = req.body;
+        const { nombreProducto, descripcionProducto = "", stockProducto, precioCProducto, precioVProducto, idUbicacion, idCategoria, medidaHabilitada = false, tipoMedida = "", cantidadMaxMedida = "", cantidadMedida = "", precioMedida = "" } = req.body;
 
         const dateRegister = new Date().getFullYear() + "-" + (new Date().getMonth() + 1)+ "-" + (new Date().getDate())
         console.log(dateRegister);
 
-        const aggregateProduct = await pool.query(addProductQuery, [nombreProducto, descripcionProducto, stockProducto, precioCProducto, precioVProducto, dateRegister, idUbicacion, idCategoria]);
+        let aggregateProduct = "";
+
+        if (medidaHabilitada){
+            aggregateProduct = await pool.query(addProductMeasureQuery, [nombreProducto, descripcionProducto, stockProducto, precioCProducto, precioVProducto, dateRegister, idUbicacion, idCategoria, medidaHabilitada, tipoMedida, cantidadMaxMedida, cantidadMedida, precioMedida]);  
+        } else {
+            aggregateProduct = await pool.query(addProductQuery, [nombreProducto, descripcionProducto, stockProducto, precioCProducto, precioVProducto, dateRegister, idUbicacion, idCategoria]);
+        }
 
         return res.json({
             status: "OK",

@@ -61,7 +61,7 @@ const addCategory = async (req,res) => {
         console.log(aggregateCategory);
         res.json({
             status: "OK",
-            message: "El producto fue registrado exitosamente",
+            message: "La categoria fue registrado exitosamente",
             data: aggregateCategory[0]
         })
 

@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const { pool } = require("../database");
 const { loginUsuarioQuery, signinUsuarioQuery } = require("../libs/queries/userQueries");
+const jwt = require("jsonwebtoken");
 
 const loginUsuario = async (req,res) => {
 
@@ -25,9 +26,16 @@ const loginUsuario = async (req,res) => {
             message: "La contraseña es incorrecta"
         });
 
+        const token = jwt.sign({id: user[0][0].idUsuario}, process.env.JWT_KEY, {expiresIn: "168h"})
+
+        let userObtained = user[0][0];
+
+        userObtained.token = token;
+
         res.json({
             status: "OK",
-            message: "Ingresó al sistema exitosamente"
+            message: "Ingresó al sistema exitosamente",
+            data: userObtained
         });
     } catch (error) {
         console.log(error);
@@ -75,6 +83,48 @@ const signinUsuario = async (req,res) => {
     }
 }
 
+const verifyToken = async(req,res) =>{
+    try {
+        const { token } = req.body;
+
+        if (!token){
+            return res.json({
+                status: "FAILED",
+                message: "El token no puede estar vacio"
+            })
+        }
+
+        const user = jwt.verify(token, process.env.JWT_KEY);
+
+        return res.json({
+            status: "OK",
+            message: "EL token es válido",
+            data: user
+        })
+    } catch (error) {
+        console.log(error);
+        if (error?.name === "TokenExpiredError"){
+            return res.json({
+                status: "FAILED",
+                message: "El token ha expirado"
+            })
+        }
+
+        if (error?.name === "JsonWebTokenError"){
+            return res.json({
+                status: "FAILED",
+                message: "El token es inválido"
+            })
+        }
+
+        return res.json({
+            status: "DANGER",
+            message: "Error interno en el servidor, vuelva a intentarlo mas tarde",
+            data: error
+        })
+    }
+}
+
 module.exports = {
-    loginUsuario, signinUsuario
+    loginUsuario, signinUsuario, verifyToken
 }

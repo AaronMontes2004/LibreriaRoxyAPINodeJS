@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator");
 const { pool } = require("../database");
-const { getPurchasesDetailQuery, addPurchaseDetailQuery, getPurchaseByIdQuery } = require("../libs/queries/purchaseDetailQueries");
+const { getPurchasesDetailQuery, addPurchaseDetailQuery, getPurchaseByIdQuery, updateProductStockQuery, getProductPurchaseByIdQuery } = require("../libs/queries/purchaseDetailQueries");
 
 
 const getPurchaseDetail = async (req,res) => {
@@ -33,8 +33,16 @@ const addPurchaseDetail = async (req,res) => {
         })
 
         const { cantidadCompra, precioUnitarioCompra, totalCompra, idCompra, idProducto } = req.body;
-
+        
         const purchaseDetailAdded = await pool.query(addPurchaseDetailQuery, [cantidadCompra, precioUnitarioCompra, totalCompra, idCompra, idProducto]);
+        
+        const productPurchase = await pool.query(getProductPurchaseByIdQuery, [idProducto]);
+        /* console.log(productPurchase[0]); */
+        const cantidadAdd = parseInt(productPurchase[0][0].stockProducto) + parseInt(cantidadCompra);
+        /* console.log("CANTIDAD ACTUALIZADA: "+cantidadAdd); */
+
+        const updatedProduct = await pool.query(updateProductStockQuery, [cantidadAdd, idProducto])
+        console.log("PRODUCTO ACTUALIZADO: " + updatedProduct[0]);
 
         return res.json({
             status: "OK",
@@ -43,6 +51,7 @@ const addPurchaseDetail = async (req,res) => {
         })
 
     } catch (error) {
+        console.log(error);
         return res.json({
             status: "OK",
             message: "Producto registrado exitosamente",

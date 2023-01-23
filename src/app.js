@@ -6,13 +6,13 @@ const app = express();
 
 // Configuración de variables
 
-app.set("PORT", process.env.PORT || 3000)
+app.set("PORT", process.env.PORT || 3000);
 
 // Configuración de middlewares
 
-app.use(morgan("dev"))
-app.use(express.urlencoded({extended: false}))
-app.use(express.json())
+app.use(morgan("dev"));
+app.use(express.urlencoded({extended: false}));
+app.use(express.json());
 app.use(cors());
 
 // Configurando las rutas
@@ -26,5 +26,6 @@ app.use("/api/purchase", require("./routes/purchaseRoutes"));
 app.use("/api/sale", require("./routes/saleRoutes"));
 app.use("/api/purchase-detail", require("./routes/purchaseDetailRoutes"))
 app.use("/api/sale-detail", require("./routes/saleDetailRoutes"))
+app.use("/api/ticket", require("./routes/ticketRoutes"))
 
 module.exports = app;

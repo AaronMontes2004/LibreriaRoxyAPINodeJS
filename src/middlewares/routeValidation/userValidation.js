@@ -24,10 +24,12 @@ const userValidation = {
             throw new Error("El correo electrónico ya está en uso");
         }),
         body("contrasenaUsuario").notEmpty().withMessage("La contraseña no puede estar vacio").isString().withMessage("La contraseña debe tener al menos una letra").isLength({min: 6}).withMessage("La contraseña debe tener al menos 6 caracteres"),
-        body("idRol").notEmpty().withMessage("Debes ingresar un rol para el usuario").custom(async (value) => {
-            const rol = await pool.query("SELECT * FROM rol WHERE idRol = ?", [value]);
-            if (rol[0].length !== 0) return true;
-            throw new Error("EL rol no existe");
+        body("idRol").notEmpty().withMessage("Debes ingresar un rol para el usuario").isInt().withMessage("El id debe ser un número entero").custom(async (value) => {
+            console.log(value);
+            const roles = await pool.query("SELECT * FROM rol WHERE idRol = ?;", [value]);
+            console.log(roles[0]);
+            if (roles[0].length === 0) throw new Error("EL rol no existe");
+            return true;
         })
     ]
 };
