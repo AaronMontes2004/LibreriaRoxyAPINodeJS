@@ -8,7 +8,7 @@ const getPurchases = async (req,res) => {
 
         return res.json({
             status: "OK",
-            message: "Se registró la compra exitosamente",
+            message: "Se obtuvieron las compras exitosamente",
             data: purchases[0]
         })
     } catch (error) {
