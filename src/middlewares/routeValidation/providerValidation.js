@@ -1,5 +1,5 @@
 const { body, param } = require("express-validator");
-const isEmail = require("validator/lib/isemail");
+/* const isEmail = require("validator/lib/isemail"); */
 const { pool } = require("../../database");
 
 
@@ -69,7 +69,7 @@ const providerValidation = {
         /* body("direccionProveedor"), */
         body("emailProveedor").custom(async(value, {req}) => {
             if (value.length === 0 || value === undefined || value === null || value === "") return true;
-            if (!isEmail(value)) throw new Error("El correo electrónico no tiene el formato adecuado");
+            /* if (!isEmail(value)) throw new Error("El correo electrónico no tiene el formato adecuado"); */
             const providerId = await pool.query("SELECT * FROM proveedor WHERE idProveedor = ?", [req.params.idProveedor])
             if (providerId[0][0].emailProveedor.toLowerCase() === value.toLowerCase()) return true;
             return true;
