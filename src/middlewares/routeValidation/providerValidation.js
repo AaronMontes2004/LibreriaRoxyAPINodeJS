@@ -1,5 +1,5 @@
 const { body, param } = require("express-validator");
-const { default: isEmail } = require("validator/lib/isemail");
+const isEmail = require("validator/lib/isemail");
 const { pool } = require("../../database");
 
 
